@@ -100,4 +100,14 @@ class FixtureRepository implements FixtureRepositoryInterface
             ->whereNotNull('away_team_id')
             ->sum('home_team_goals');
     }
+
+    public function truncate()
+    {
+        return $this->model->truncate();
+    }
+
+    public function saveAll(array $values)
+    {
+        return $this->model->insert($values);
+    }
 }

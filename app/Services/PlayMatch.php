@@ -1,7 +1,7 @@
 <?php namespace App\Services;
 
-use App\Models\Team;
 use App\Repository\Interfaces\FixtureRepositoryInterface;
+use App\Repository\Interfaces\TeamRepositoryInterface;
 use Illuminate\Database\Eloquent\Collection;
 
 class PlayMatch
@@ -22,7 +22,8 @@ class PlayMatch
     public function updateStandings()
     {
         $fixtureRepository = app(FixtureRepositoryInterface::class);
-        $teams = Team::all();
+        $teamRepository = app(TeamRepositoryInterface::class);
+        $teams = $teamRepository->getAllTeams();
 
         foreach ($teams as $team) {
             $teamID = $team->getId();

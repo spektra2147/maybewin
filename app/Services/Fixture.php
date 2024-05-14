@@ -1,7 +1,5 @@
 <?php namespace App\Services;
 
-use App\Models\Team;
-
 class Fixture
 {
     public function generate($teams)
@@ -58,7 +56,7 @@ class Fixture
             $team->probability = $probability;
         }
 
-        return $teams->sortsByDesc('probability')
+        return $teams->sortByDesc('probability')
             ->select(['name', 'probability', 'goal_difference'])
             ->values();
     }

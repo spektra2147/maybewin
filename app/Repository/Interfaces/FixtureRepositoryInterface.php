@@ -21,4 +21,8 @@ interface FixtureRepositoryInterface
     public function totalGoalsAgainstAtHome($teamId): int;
 
     public function totalGoalsAgainstNotAtHome($teamId): int;
+
+    public function truncate();
+
+    public function saveAll(array $values);
 }

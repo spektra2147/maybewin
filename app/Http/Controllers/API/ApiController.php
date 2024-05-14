@@ -3,28 +3,27 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
-use App\Models\Fixture;
-use App\Models\Team;
 use App\Repository\Interfaces\FixtureRepositoryInterface;
+use App\Repository\Interfaces\TeamRepositoryInterface;
 use App\Services\PlayMatch;
 use Justfeel\Response\ResponseCodes;
 use Justfeel\Response\ResponseResult;
 
 class ApiController extends Controller
 {
-    public function getTeamList()
+    public function getTeamList(TeamRepositoryInterface $teamRepository)
     {
-        $teams = Team::all();
+        $teams = $teamRepository->getAllTeams();
         return response()->json(['success' => true, 'data' => $teams], ResponseCodes::HTTP_OK);
     }
 
-    public function generateFixture()
+    public function generateFixture(TeamRepositoryInterface $teamRepository, FixtureRepositoryInterface $fixtureRepository)
     {
-        $teams = Team::all()->pluck('id')->toArray();
+        $teams = $teamRepository->getAllTeams()->pluck('id')->toArray();
 
         $fixtures = (new \App\Services\Fixture())->generate($teams);
 
-        Fixture::insert($fixtures);
+        $fixtureRepository->saveAll($fixtures);
 
         return ResponseResult::generate(true, 'Fixture generated!', ResponseCodes::HTTP_CREATED);
     }
@@ -59,25 +58,18 @@ class ApiController extends Controller
         return ResponseResult::generate(true, 'All matches played', ResponseCodes::HTTP_OK);
     }
 
-    public function reset()
+    public function reset(FixtureRepositoryInterface $fixtureRepository, TeamRepositoryInterface $teamRepository)
     {
-        Fixture::truncate();
+        $fixtureRepository->truncate();
 
-        Team::query()->update([
-            'played' => 0,
-            'won' => 0,
-            'lost' => 0,
-            'drawn' => 0,
-            'goal_difference' => 0,
-            'points' => 0,
-        ]);
+        $teamRepository->resetValues();
 
         return ResponseResult::generate(true, 'All data removed', ResponseCodes::HTTP_OK);
     }
 
-    public function championsProbabilities(\App\Services\Fixture $fixture)
+    public function championsProbabilities(\App\Services\Fixture $fixture, TeamRepositoryInterface $teamRepository)
     {
-        $teams = Team::all();
+        $teams = $teamRepository->getAllTeams();
         $values = $fixture->championProbabilities($teams);
 
         return response()->json($values);
