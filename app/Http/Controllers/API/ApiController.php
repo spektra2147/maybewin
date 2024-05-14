@@ -30,10 +30,14 @@ class ApiController extends Controller
 
     public function play(FixtureRepositoryInterface $fixtureRepository, PlayMatch $playMatch)
     {
+        if (!$fixtureRepository->countAll()) {
+            return ResponseResult::generate(false, 'Generate fixture', ResponseCodes::HTTP_BAD_REQUEST);
+        }
+
         $fixtures = $fixtureRepository->getThisWeek();
 
         if (!count($fixtures)) {
-            return ResponseResult::generate(true, 'All matches played', ResponseCodes::HTTP_OK);
+            return ResponseResult::generate(false, 'All matches played', ResponseCodes::HTTP_OK);
         }
 
         $playMatch->play($fixtures);
@@ -45,7 +49,15 @@ class ApiController extends Controller
 
     public function playAll(FixtureRepositoryInterface $fixtureRepository, PlayMatch $playMatch)
     {
+        if (!$fixtureRepository->countAll()) {
+            return ResponseResult::generate(false, 'Generate fixture', ResponseCodes::HTTP_BAD_REQUEST);
+        }
+
         $allWeeks = $fixtureRepository->getAllWeeks();
+
+        if (!count($allWeeks)) {
+            return ResponseResult::generate(false, 'All matches played', ResponseCodes::HTTP_OK);
+        }
 
         foreach ($allWeeks as $week) {
             $fixtures = $fixtureRepository->getByWeekNumber($week->week_number);

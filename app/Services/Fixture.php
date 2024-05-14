@@ -50,10 +50,10 @@ class Fixture
         foreach ($teams as $team) {
             $points = $team->points;
 
-            $probability = ($points / $totalPoints);
+            $probability = $totalPoints != 0 ? ($points / $totalPoints) : 0;
             $probability *= 100;
 
-            $team->probability = $probability;
+            $team->probability = number_format($probability,0);
         }
 
         return $teams->sortByDesc('probability')

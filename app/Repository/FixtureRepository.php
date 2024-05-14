@@ -110,4 +110,9 @@ class FixtureRepository implements FixtureRepositoryInterface
     {
         return $this->model->insert($values);
     }
+
+    public function countAll()
+    {
+        return $this->model->all()->count();
+    }
 }

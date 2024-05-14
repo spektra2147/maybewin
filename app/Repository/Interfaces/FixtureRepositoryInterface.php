@@ -25,4 +25,6 @@ interface FixtureRepositoryInterface
     public function truncate();
 
     public function saveAll(array $values);
+
+    public function countAll();
 }
